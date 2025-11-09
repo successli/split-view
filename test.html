@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split View Extension 测试页面</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .test-section {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .test-button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .test-button:hover {
+      background: #0056b3;
+    }
+    .status {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    .info { background: #d1ecf1; color: #0c5460; }
+    #log {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      padding: 15px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧪 Split View Extension 测试页面</h1>
+
+  <div class="test-section">
+    <h2>基础功能测试</h2>
+    <button class="test-button" onclick="testExtensionConnection()">测试扩展连接</button>
+    <button class="test-button" onclick="testPermissions()">测试权限</button>
+    <button class="test-button" onclick="testWindowCreation()">测试窗口创建</button>
+    <div id="status"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>分屏功能测试</h2>
+    <button class="test-button" onclick="testSplitView()">测试分屏功能</button>
+    <button class="test-button" onclick="testAlternativeSplit()">测试替代方案</button>
+    <div>
+      <label>网站1: <input type="text" id="website1" value="https://www.google.com" style="width: 300px;"></label><br>
+      <label>网站2: <input type="text" id="website2" value="https://github.com" style="width: 300px;"></label>
+    </div>
+  </div>
+
+  <div class="test-section">
+    <h2>调试日志</h2>
+    <button class="test-button" onclick="clearLog()">清空日志</button>
+    <div id="log"></div>
+  </div>
+
+  <script>
+    let logElement = document.getElementById('log');
+    let statusElement = document.getElementById('status');
+
+    function log(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      const logMessage = `[${timestamp}] ${message}`;
+      console.log(logMessage);
+
+      if (logElement) {
+        logElement.textContent += logMessage + '\n';
+        logElement.scrollTop = logElement.scrollHeight;
+      }
+    }
+
+    function showStatus(message, type = 'info') {
+      if (statusElement) {
+        statusElement.className = `status ${type}`;
+        statusElement.textContent = message;
+      }
+      log(message, type);
+    }
+
+    function clearLog() {
+      if (logElement) {
+        logElement.textContent = '';
+      }
+    }
+
+    async function testExtensionConnection() {
+      log('开始测试扩展连接...');
+      try {
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+          const extensionId = chrome.runtime.id;
+          showStatus(`✅ 扩展连接成功 (ID: ${extensionId})`, 'success');
+        } else {
+          showStatus('❌ Chrome API不可用', 'error');
+        }
+      } catch (error) {
+        showStatus(`❌ 扩展连接失败: ${error.message}`, 'error');
+      }
+    }
+
+    async function testPermissions() {
+      log('开始测试权限...');
+      try {
+        const permissions = ['windows', 'tabs', 'storage'];
+        const hasPermissions = await Promise.all(
+          permissions.map(permission =>
+            chrome.permissions.contains({ permissions: [permission] })
+          )
+        );
+
+        const results = permissions.map((perm, index) => `${perm}: ${hasPermissions[index] ? '✅' : '❌'}`);
+        showStatus(`权限检查结果: ${results.join(', ')}`, hasPermissions.every(p => p) ? 'success' : 'error');
+      } catch (error) {
+        showStatus(`❌ 权限检查失败: ${error.message}`, 'error');
+      }
+    }
+
+    async function testWindowCreation() {
+      log('开始测试窗口创建...');
+      try {
+        const currentWindow = await chrome.windows.getCurrent();
+        showStatus(`✅ 获取当前窗口成功 (宽度: ${currentWindow.width}, 高度: ${currentWindow.height})`, 'success');
+      } catch (error) {
+        showStatus(`❌ 窗口测试失败: ${error.message}`, 'error');
+      }
+    }
+
+    async function testSplitView() {
+      log('开始测试分屏功能...');
+      try {
+        const website1 = document.getElementById('website1').value;
+        const website2 = document.getElementById('website2').value;
+
+        const response = await chrome.runtime.sendMessage({
+          action: 'createSplitView',
+          data: {
+            website1,
+            website2,
+            mode: 'side-by-side'
+          }
+        });
+
+        if (response.success) {
+          showStatus(`✅ 分屏功能测试成功: ${JSON.stringify(response.data)}`, 'success');
+        } else {
+          showStatus(`❌ 分屏功能测试失败: ${response.error}`, 'error');
+        }
+      } catch (error) {
+        showStatus(`❌ 分屏功能测试失败: ${error.message}`, 'error');
+      }
+    }
+
+    async function testAlternativeSplit() {
+      log('开始测试替代分屏方案...');
+      try {
+        const website1 = document.getElementById('website1').value;
+        const website2 = document.getElementById('website2').value;
+
+        const response = await chrome.runtime.sendMessage({
+          action: 'createAlternativeSplit',
+          data: {
+            website1,
+            website2,
+            mode: 'side-by-side'
+          }
+        });
+
+        if (response.success) {
+          showStatus(`✅ 替代分屏测试成功: ${JSON.stringify(response.data)}`, 'success');
+        } else {
+          showStatus(`❌ 替代分屏测试失败: ${response.error}`, 'error');
+        }
+      } catch (error) {
+        showStatus(`❌ 替代分屏测试失败: ${error.message}`, 'error');
+      }
+    }
+
+    // 页面加载时自动测试基础连接
+    document.addEventListener('DOMContentLoaded', () => {
+      log('测试页面加载完成');
+      testExtensionConnection();
+    });
+
+    // 监听扩展消息
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+        log(`收到消息: ${JSON.stringify(message)}`);
+      });
+    }
+  </script>
+</body>
+</html>

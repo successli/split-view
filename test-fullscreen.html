@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全屏分屏测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .screen-info {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: monospace;
+            text-align: left;
+        }
+        .info-item {
+            margin: 10px 0;
+            font-size: 1.1rem;
+        }
+        .highlight {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .mode-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .mode-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+        }
+        .mode-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ 全屏分屏测试页面</h1>
+
+        <div class="screen-info" id="screenInfo">
+            <h3>当前屏幕信息</h3>
+            <div class="info-item">屏幕宽度: <span class="highlight" id="screenWidth">检测中...</span></div>
+            <div class="info-item">屏幕高度: <span class="highlight" id="screenHeight">检测中...</span></div>
+            <div class="info-item">可用宽度: <span class="highlight" id="availWidth">检测中...</span></div>
+            <div class="info-item">可用高度: <span class="highlight" id="availHeight">检测中...</span></div>
+            <div class="info-item">设备像素比: <span class="highlight" id="pixelRatio">检测中...</span></div>
+        </div>
+
+        <div class="mode-info">
+            <div class="mode-card">
+                <div class="mode-title">🔄 左右分屏模式</div>
+                <div>窗口1: 左半屏幕</div>
+                <div>窗口2: 右半屏幕</div>
+                <div>间隙: 2px</div>
+            </div>
+            <div class="mode-card">
+                <div class="mode-title">⬆️ 上下分屏模式</div>
+                <div>窗口1: 上半屏幕</div>
+                <div>窗口2: 下半屏幕</div>
+                <div>间隙: 2px</div>
+            </div>
+            <div class="mode-card">
+                <div class="mode-title">🎯 专注模式</div>
+                <div>窗口1: 65% 宽度</div>
+                <div>窗口2: 35% 宽度</div>
+                <div>适用于主次任务</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button class="test-button" onclick="testLayout()">🧪 测试布局计算</button>
+            <button class="test-button" onclick="window.close()">❌ 关闭测试窗口</button>
+        </div>
+
+        <div id="layoutResult" style="margin-top: 20px; text-align: left; font-family: monospace;"></div>
+    </div>
+
+    <script>
+        // 显示屏幕信息
+        function updateScreenInfo() {
+            document.getElementById('screenWidth').textContent = screen.width + 'px';
+            document.getElementById('screenHeight').textContent = screen.height + 'px';
+            document.getElementById('availWidth').textContent = screen.availWidth + 'px';
+            document.getElementById('availHeight').textContent = screen.availHeight + 'px';
+            document.getElementById('pixelRatio').textContent = window.devicePixelRatio;
+        }
+
+        // 测试布局计算
+        function testLayout() {
+            const screenWidth = screen.availWidth;
+            const screenHeight = screen.availHeight;
+            const windowGap = 2;
+
+            const layouts = {
+                'side-by-side': {
+                    width1: Math.floor(screenWidth / 2) - Math.floor(windowGap / 2),
+                    width2: Math.floor(screenWidth / 2) - Math.floor(windowGap / 2),
+                    height: screenHeight,
+                    left1: 0,
+                    left2: Math.floor(screenWidth / 2) + Math.floor(windowGap / 2),
+                    top: 0
+                },
+                'top-bottom': {
+                    width1: screenWidth,
+                    width2: screenWidth,
+                    height: Math.floor(screenHeight / 2) - Math.floor(windowGap / 2),
+                    left1: 0,
+                    left2: 0,
+                    top1: 0,
+                    top2: Math.floor(screenHeight / 2) + Math.floor(windowGap / 2)
+                },
+                'focus': {
+                    width1: Math.floor(screenWidth * 0.65) - Math.floor(windowGap / 2),
+                    width2: Math.floor(screenWidth * 0.35) - Math.floor(windowGap / 2),
+                    height: screenHeight,
+                    left1: 0,
+                    left2: Math.floor(screenWidth * 0.65) + Math.floor(windowGap / 2),
+                    top: 0
+                }
+            };
+
+            let resultHtml = '<h4>🎯 布局计算结果：</h4>';
+            for (const [mode, layout] of Object.entries(layouts)) {
+                const modeNames = {
+                    'side-by-side': '左右分屏',
+                    'top-bottom': '上下分屏',
+                    'focus': '专注模式'
+                };
+
+                resultHtml += `<div style="margin: 15px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">`;
+                resultHtml += `<strong>${modeNames[mode]}:</strong><br>`;
+                resultHtml += `窗口1: ${layout.width1}×${layout.height} at (${layout.left1}, ${layout.top1 || layout.top})<br>`;
+                resultHtml += `窗口2: ${layout.width2}×${layout.height} at (${layout.left2}, ${layout.top2 || layout.top})`;
+                resultHtml += `</div>`;
+            }
+
+            document.getElementById('layoutResult').innerHTML = resultHtml;
+        }
+
+        // 页面加载时更新屏幕信息
+        window.addEventListener('load', () => {
+            updateScreenInfo();
+            testLayout();
+        });
+
+        // 窗口大小变化时更新信息
+        window.addEventListener('resize', updateScreenInfo);
+    </script>
+</body>
+</html>

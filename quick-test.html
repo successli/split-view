@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速分屏测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .screen-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 15px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ 快速分屏测试</h1>
+
+        <div class="screen-info" id="screenInfo">
+            <div>屏幕: <span id="screenSize">检测中...</span></div>
+            <div>可用区域: <span id="availSize">检测中...</span></div>
+        </div>
+
+        <div id="status" class="status info">
+            点击下面的按钮测试全屏分屏功能
+        </div>
+
+        <div>
+            <button onclick="testSideBySide()">🔄 左右分屏</button>
+            <button onclick="testTopBottom()">⬆️ 上下分屏</button>
+            <button onclick="testFocus()">🎯 专注模式</button>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <small>注意：这将创建两个新窗口来测试分屏布局</small>
+        </div>
+    </div>
+
+    <script src="test-screen-api.js"></script>
+    <script>
+        // 更新屏幕信息
+        function updateScreenInfo() {
+            const width = screen.availWidth;
+            const height = screen.availHeight;
+
+            document.getElementById('screenSize').textContent = `${screen.width} × ${screen.height}`;
+            document.getElementById('availSize').textContent = `${width} × ${height}`;
+        }
+
+        // 显示状态信息
+        function showStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+        }
+
+        // 创建测试窗口
+        async function createTestWindow(url, width, height, left, top, focused = true) {
+            try {
+                const window = await chrome.windows.create({
+                    url: url,
+                    width: width,
+                    height: height,
+                    left: left,
+                    top: top,
+                    focused: focused,
+                    state: 'normal'
+                });
+                console.log('创建窗口成功:', window.id);
+                return window;
+            } catch (error) {
+                console.error('创建窗口失败:', error);
+                throw error;
+            }
+        }
+
+        // 测试左右分屏
+        async function testSideBySide() {
+            try {
+                showStatus('正在创建左右分屏布局...', 'info');
+
+                const screenWidth = screen.availWidth;
+                const screenHeight = screen.availHeight;
+                const windowGap = 2;
+
+                const width1 = Math.floor(screenWidth / 2) - Math.floor(windowGap / 2);
+                const width2 = Math.floor(screenWidth / 2) - Math.floor(windowGap / 2);
+                const left1 = 0;
+                const left2 = width1 + windowGap;
+
+                console.log('左右分屏布局:', { width1, width2, left1, left2, height: screenHeight });
+
+                // 创建两个测试窗口
+                const window1 = await createTestWindow(
+                    'test-fullscreen.html',
+                    width1,
+                    screenHeight,
+                    left1,
+                    0,
+                    true
+                );
+
+                setTimeout(async () => {
+                    const window2 = await createTestWindow(
+                        'https://www.google.com',
+                        width2,
+                        screenHeight,
+                        left2,
+                        0,
+                        false
+                    );
+                    showStatus('✅ 左右分屏创建成功！窗口已铺满整个屏幕', 'success');
+                }, 500);
+
+            } catch (error) {
+                showStatus('❌ 创建失败: ' + error.message, 'error');
+                console.error('左右分屏测试失败:', error);
+            }
+        }
+
+        // 测试上下分屏
+        async function testTopBottom() {
+            try {
+                showStatus('正在创建上下分屏布局...', 'info');
+
+                const screenWidth = screen.availWidth;
+                const screenHeight = screen.availHeight;
+                const windowGap = 2;
+
+                const height = Math.floor(screenHeight / 2) - Math.floor(windowGap / 2);
+                const top1 = 0;
+                const top2 = height + windowGap;
+
+                console.log('上下分屏布局:', { width: screenWidth, height, top1, top2 });
+
+                // 创建两个测试窗口
+                const window1 = await createTestWindow(
+                    'test-fullscreen.html',
+                    screenWidth,
+                    height,
+                    0,
+                    top1,
+                    true
+                );
+
+                setTimeout(async () => {
+                    const window2 = await createTestWindow(
+                        'https://www.google.com',
+                        screenWidth,
+                        height,
+                        0,
+                        top2,
+                        false
+                    );
+                    showStatus('✅ 上下分屏创建成功！窗口已铺满整个屏幕', 'success');
+                }, 500);
+
+            } catch (error) {
+                showStatus('❌ 创建失败: ' + error.message, 'error');
+                console.error('上下分屏测试失败:', error);
+            }
+        }
+
+        // 测试专注模式
+        async function testFocus() {
+            try {
+                showStatus('正在创建专注模式布局...', 'info');
+
+                const screenWidth = screen.availWidth;
+                const screenHeight = screen.availHeight;
+                const windowGap = 2;
+
+                const width1 = Math.floor(screenWidth * 0.65) - Math.floor(windowGap / 2);
+                const width2 = Math.floor(screenWidth * 0.35) - Math.floor(windowGap / 2);
+                const left1 = 0;
+                const left2 = width1 + windowGap;
+
+                console.log('专注模式布局:', { width1, width2, left1, left2, height: screenHeight });
+
+                // 创建两个测试窗口
+                const window1 = await createTestWindow(
+                    'test-fullscreen.html',
+                    width1,
+                    screenHeight,
+                    left1,
+                    0,
+                    true
+                );
+
+                setTimeout(async () => {
+                    const window2 = await createTestWindow(
+                        'https://www.google.com',
+                        width2,
+                        screenHeight,
+                        left2,
+                        0,
+                        false
+                    );
+                    showStatus('✅ 专注模式创建成功！窗口已铺满整个屏幕', 'success');
+                }, 500);
+
+            } catch (error) {
+                showStatus('❌ 创建失败: ' + error.message, 'error');
+                console.error('专注模式测试失败:', error);
+            }
+        }
+
+        // 页面加载时更新信息
+        window.addEventListener('load', () => {
+            updateScreenInfo();
+
+            // 检查是否在扩展环境中
+            if (typeof chrome !== 'undefined' && chrome.windows) {
+                showStatus('✅ 扩展环境检测成功，可以开始测试', 'success');
+            } else {
+                showStatus('⚠️ 未在扩展环境中运行，部分功能可能不可用', 'info');
+            }
+        });
+
+        // 窗口大小变化时更新信息
+        window.addEventListener('resize', updateScreenInfo);
+    </script>
+</body>
+</html>

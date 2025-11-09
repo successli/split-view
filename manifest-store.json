@@ -1,0 +1,54 @@
+{
+  "manifest_version": 3,
+  "name": "Split View - Chrome分屏助手",
+  "version": "1.0.0",
+  "description": "Chrome浏览器分屏浏览助手，支持一键分屏显示两个网页，提升工作效率",
+
+  "author": "Split View Extension Team",
+  "homepage_url": "https://github.com/your-username/split-view-extension",
+
+  "permissions": [
+    "windows",
+    "tabs",
+    "storage",
+    "system.display",
+    "activeTab"
+  ],
+
+  "host_permissions": [
+    "<all_urls>"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Split View 分屏助手",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["guide.html"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}

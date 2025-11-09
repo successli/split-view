@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Split View - Chrome分屏助手",
+  "version": "1.0.0",
+  "description": "自动引导启用Chrome Split View实验性功能，提供一键分屏浏览两个网页的便捷工具",
+
+  "permissions": [
+    "windows",
+    "tabs",
+    "storage",
+    "system.display",
+    "activeTab"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Split View 分屏助手"
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["guide.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

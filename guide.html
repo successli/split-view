@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split View 启用指南</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #f8f9fa;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+
+    .header-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      opacity: 0.9;
+    }
+
+    main {
+      padding: 40px 30px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 40px;
+      padding: 20px;
+      background: #e3f2fd;
+      border-radius: 8px;
+      border-left: 4px solid #2196f3;
+    }
+
+    .intro h2 {
+      color: #1976d2;
+      margin-bottom: 10px;
+    }
+
+    .guide-section {
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-card {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .step-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .step-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .step-number {
+      background: #2563eb;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .step-content h3 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .step-description {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .code-block {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 14px;
+      margin: 10px 0;
+      overflow-x: auto;
+    }
+
+    .highlight {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+
+    .highlight h4 {
+      color: #856404;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-1px);
+    }
+
+    .alternative-section {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 30px;
+    }
+
+    .alternative-section h3 {
+      color: #856404;
+      margin-bottom: 15px;
+    }
+
+    .platform-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .platform-card {
+      background: white;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .platform-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    .platform-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .platform-desc {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+
+    .status-enabled {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-disabled {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 3px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, #7c3aed);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #f8f9fa;
+      color: #666;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        border-radius: 8px;
+      }
+
+      header {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      main {
+        padding: 30px 20px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .platform-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-icon">🖥️</div>
+      <h1>Chrome Split View 启用指南</h1>
+      <p class="subtitle">轻松启用Chrome实验性分屏功能，提升您的浏览体验</p>
+    </header>
+
+    <main>
+      <section class="intro">
+        <h2>📖 关于 Split View</h2>
+        <p><strong>Split View</strong> 是Chrome的实验性功能，可以在单个浏览器窗口中同时显示两个网页，非常适合多任务处理、对比浏览和提升工作效率。</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <p><small>按照本指南完成设置，即可开始使用分屏功能！</small></p>
+      </section>
+
+      <section class="guide-section">
+        <h2 class="section-title">
+          <span>🚀</span>
+          启用步骤
+        </h2>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>打开Chrome实验性功能页面</h3>
+              <p class="step-description">
+                首先需要打开Chrome的实验性功能设置页面。这是Google提供的高级功能测试区域。
+              </p>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="btn btn-primary" onclick="openChromeFlags()">
+              <span>🔗</span>
+              打开 chrome://flags
+            </button>
+          </div>
+          <div class="code-block">
+            chrome://flags/#split-view
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>查找 Split View 功能</h3>
+              <p class="step-description">
+                在实验性功能页面中，找到"Split View"选项。您可以使用页面顶部的搜索功能快速定位。
+              </p>
+            </div>
+          </div>
+          <div class="highlight">
+            <h4><span>💡</span> 搜索技巧</h4>
+            <p>在搜索框中输入 <code>split-view</code> 或 <code>Split View</code> 可以快速找到相关选项。</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>启用 Split View 功能</h3>
+              <p class="step-description">
+                找到"Split View"选项后，将下拉菜单从"Default"改为"Enabled"。
+              </p>
+            </div>
+          </div>
+          <div class="highlight">
+            <h4><span>⚠️</span> 重要提示</h4>
+            <p>启用实验性功能后需要重启Chrome浏览器才能生效。</p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">4</div>
+            <div class="step-content">
+              <h3>重启Chrome浏览器</h3>
+              <p class="step-description">
+                点击页面右下角出现的"Relaunch"按钮，或者手动关闭并重新打开Chrome浏览器。
+              </p>
+            </div>
+          </div>
+          <div class="button-group">
+            <button class="btn btn-secondary" onclick="checkSplitViewStatus()">
+              <span>✅</span>
+              检查启用状态
+            </button>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-header">
+            <div class="step-number">5</div>
+          </div>
+          <div class="step-content">
+            <h3>开始使用分屏功能</h3>
+            <p class="step-description">
+              重启完成后，点击扩展图标即可使用Split View功能！选择您想要同时浏览的两个网站，一键开启分屏模式。
+            </p>
+          </div>
+          <div class="button-group">
+            <button class="btn btn-primary" onclick="testSplitView()">
+              <span>🧪</span>
+              测试分屏功能
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="alternative-section">
+        <h3><span>🔄</span> 替代方案</h3>
+        <p>如果您的Chrome版本不支持Split View实验性功能，我们提供了基于窗口管理的替代方案，可以实现类似的分屏效果：</p>
+
+        <div class="platform-cards">
+          <div class="platform-card">
+            <div class="platform-icon">🪟</div>
+            <div class="platform-name">窗口分屏</div>
+            <div class="platform-desc">自动创建两个并排的浏览器窗口，实现分屏浏览效果</div>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon">⚙️</div>
+            <div class="platform-name">智能布局</div>
+            <div class="platform-desc">根据屏幕尺寸自动调整窗口大小和位置</div>
+          </div>
+          <div class="platform-card">
+            <div class="platform-icon">🎯</div>
+            <div class="platform-name">多种模式</div>
+            <div class="platform-desc">支持左右分屏、上下分屏、专注模式等多种布局</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="button-group" style="justify-content: center; margin-top: 40px;">
+        <button class="btn btn-primary" onclick="openExtension()">
+          <span>🚀</span>
+          打开 Split View 扩展
+        </button>
+        <button class="btn btn-secondary" onclick="window.close()">
+          <span>✅</span>
+          完成设置
+        </button>
+      </div>
+    </main>
+
+    <footer>
+      <p>💡 提示：实验性功能可能在未来的Chrome版本中发生变化。如果遇到问题，可以随时回到此页面重新设置。</p>
+      <p style="margin-top: 10px;">
+        Split View Chrome Extension v1.0.0 |
+        <span id="currentStatus">检测中...</span>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // 页面加载完成后的初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      updateProgress(0);
+      checkCurrentStatus();
+      startProgressAnimation();
+    });
+
+    // 进度条动画
+    function startProgressAnimation() {
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        updateProgress(progress);
+
+        if (progress >= 100) {
+          clearInterval(interval);
+        }
+      }, 50);
+    }
+
+    // 更新进度条
+    function updateProgress(percent) {
+      const progressBar = document.getElementById('progressBar');
+      progressBar.style.width = percent + '%';
+    }
+
+    // 打开Chrome实验性功能页面
+    function openChromeFlags() {
+      window.open('chrome://flags/#split-view', '_blank');
+      updateProgress(25);
+      showNotification('正在打开Chrome实验性功能页面...', 'info');
+    }
+
+    // 检查Split View状态
+    async function checkSplitViewStatus() {
+      try {
+        updateProgress(75);
+        showNotification('正在检测Split View状态...', 'info');
+
+        // 发送消息给background script检查状态
+        const response = await sendMessageToBackground({
+          action: 'checkSplitViewSupport'
+        });
+
+        if (response.success) {
+          const data = response.data;
+
+          if (data.hasNativeSupport) {
+            showNotification('✅ Split View功能已启用！', 'success');
+            updateProgress(100);
+          } else {
+            showNotification('⚠️ Split View功能未启用，请检查设置', 'warning');
+          }
+
+          updateStatusDisplay(data);
+        } else {
+          showNotification('检测失败，请稍后重试', 'error');
+        }
+
+      } catch (error) {
+        console.error('检查状态失败:', error);
+        showNotification('检测失败，请确保扩展已正确安装', 'error');
+      }
+    }
+
+    // 检查当前状态
+    async function checkCurrentStatus() {
+      try {
+        const response = await sendMessageToBackground({
+          action: 'checkSplitViewSupport'
+        });
+
+        if (response.success) {
+          updateStatusDisplay(response.data);
+        }
+
+      } catch (error) {
+        console.error('检查当前状态失败:', error);
+        document.getElementById('currentStatus').textContent = '检测失败';
+      }
+    }
+
+    // 更新状态显示
+    function updateStatusDisplay(data) {
+      const statusElement = document.getElementById('currentStatus');
+
+      if (data.hasNativeSupport) {
+        statusElement.innerHTML = '<span class="status-indicator status-enabled">✅ 已启用</span>';
+      } else {
+        statusElement.innerHTML = '<span class="status-indicator status-disabled">❌ 未启用</span>';
+      }
+    }
+
+    // 测试Split View功能
+    async function testSplitView() {
+      try {
+        showNotification('正在测试分屏功能...', 'info');
+
+        const response = await sendMessageToBackground({
+          action: 'createAlternativeSplit',
+          data: {
+            website1: 'https://www.google.com',
+            website2: 'https://github.com',
+            mode: 'side-by-side'
+          }
+        });
+
+        if (response.success) {
+          showNotification('✅ 分屏功能测试成功！', 'success');
+          updateProgress(100);
+        } else {
+          showNotification('测试失败，请检查扩展权限', 'error');
+        }
+
+      } catch (error) {
+        console.error('测试失败:', error);
+        showNotification('测试失败：' + error.message, 'error');
+      }
+    }
+
+    // 打开扩展
+    async function openExtension() {
+      try {
+        // 尝试打开扩展的popup
+        await chrome.action.openPopup();
+        window.close();
+      } catch (error) {
+        // 如果无法打开popup，显示提示
+        showNotification('请点击浏览器工具栏中的扩展图标', 'info');
+      }
+    }
+
+    // 发送消息给background script
+    function sendMessageToBackground(message) {
+      return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(message, (response) => {
+          if (chrome.runtime.lastError) {
+            reject(new Error(chrome.runtime.lastError.message));
+          } else {
+            resolve(response);
+          }
+        });
+      });
+    }
+
+    // 显示通知
+    function showNotification(message, type = 'info') {
+      // 创建通知元素
+      const notification = document.createElement('div');
+      notification.className = `notification notification-${type}`;
+      notification.textContent = message;
+
+      // 添加样式
+      Object.assign(notification.style, {
+        position: 'fixed',
+        top: '20px',
+        right: '20px',
+        padding: '12px 20px',
+        borderRadius: '6px',
+        color: 'white',
+        fontSize: '14px',
+        fontWeight: '500',
+        zIndex: '10000',
+        opacity: '0',
+        transform: 'translateY(-20px)',
+        transition: 'all 0.3s ease',
+        maxWidth: '300px'
+      });
+
+      // 设置背景色
+      switch (type) {
+        case 'success':
+          notification.style.background = '#28a745';
+          break;
+        case 'error':
+          notification.style.background = '#dc3545';
+          break;
+        case 'warning':
+          notification.style.background = '#ffc107';
+          notification.style.color = '#212529';
+          break;
+        default:
+          notification.style.background = '#17a2b8';
+      }
+
+      // 添加到页面
+      document.body.appendChild(notification);
+
+      // 显示动画
+      setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateY(0)';
+      }, 100);
+
+      // 自动隐藏
+      setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateY(-20px)';
+        setTimeout(() => {
+          if (document.body.contains(notification)) {
+            document.body.removeChild(notification);
+          }
+        }, 300);
+      }, 3000);
+    }
+
+    // 键盘快捷键
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.ctrlKey) {
+        openChromeFlags();
+      } else if (e.key === 'F5') {
+        e.preventDefault();
+        checkCurrentStatus();
+      }
+    });
+  </script>
+</body>
+</html>

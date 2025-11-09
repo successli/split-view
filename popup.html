@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Split View 分屏助手</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- 头部 -->
+    <header class="header">
+      <div class="header-top">
+        <div class="version-info">
+          <span class="version-label">版本</span>
+          <span class="version-number" id="versionNumber">1.0.0</span>
+        </div>
+        <button class="reset-btn" id="resetBtn" title="重置所有设置">
+          <span class="reset-icon">🔄</span>
+          重置
+        </button>
+      </div>
+      <h1 class="title">🖥️ Split View</h1>
+      <p class="subtitle">Chrome分屏浏览助手</p>
+    </header>
+
+    <!-- 预设组合区域 -->
+    <section class="presets-section">
+      <div class="preset-list" id="presetList">
+        <!-- 预设选项1 -->
+        <div class="preset-item" data-preset-id="1">
+          <div class="preset-controls">
+            <button class="edit-btn" data-preset-id="1">
+              <span class="edit-icon">✏️</span>
+            </button>
+          </div>
+          <div class="preset-info">
+            <div class="website-left">
+              <span class="site-icon">🧠</span>
+              <div class="website-name">DeepSeek</div>
+              <input type="text" class="url-input" value="https://chat.deepseek.com" placeholder="左侧网址" data-side="left" readonly>
+            </div>
+            <div class="divider">
+              <span class="divider-icon">+</span>
+            </div>
+            <div class="website-right">
+              <span class="site-icon">🌙</span>
+              <div class="website-name">Kimi</div>
+              <input type="text" class="url-input" value="https://kimi.moonshot.cn" placeholder="右侧网址" data-side="right" readonly>
+            </div>
+          </div>
+          <button class="split-btn" data-left="https://chat.deepseek.com" data-right="https://kimi.moonshot.cn">
+            <span class="btn-icon">🚀</span>
+            分屏
+          </button>
+          <button class="delete-preset-btn" data-preset-id="1" title="删除此预设">
+            <span class="delete-icon">✕</span>
+          </button>
+        </div>
+
+        <!-- 预设选项2 -->
+        <div class="preset-item" data-preset-id="2">
+          <div class="preset-controls">
+            <button class="edit-btn" data-preset-id="2">
+              <span class="edit-icon">✏️</span>
+            </button>
+          </div>
+          <div class="preset-info">
+            <div class="website-left">
+              <span class="site-icon">🤖</span>
+              <div class="website-name">Claude</div>
+              <input type="text" class="url-input" value="https://claude.ai" placeholder="左侧网址" data-side="left" readonly>
+            </div>
+            <div class="divider">
+              <span class="divider-icon">+</span>
+            </div>
+            <div class="website-right">
+              <span class="site-icon">💬</span>
+              <div class="website-name">ChatGPT</div>
+              <input type="text" class="url-input" value="https://chat.openai.com" placeholder="右侧网址" data-side="right" readonly>
+            </div>
+          </div>
+          <button class="split-btn" data-left="https://claude.ai" data-right="https://chat.openai.com">
+            <span class="btn-icon">🚀</span>
+            分屏
+          </button>
+          <button class="delete-preset-btn" data-preset-id="2" title="删除此预设">
+            <span class="delete-icon">✕</span>
+          </button>
+        </div>
+
+        <!-- 预设选项3 -->
+        <div class="preset-item" data-preset-id="3">
+          <div class="preset-controls">
+            <button class="edit-btn" data-preset-id="3">
+              <span class="edit-icon">✏️</span>
+            </button>
+          </div>
+          <div class="preset-info">
+            <div class="website-left">
+              <span class="site-icon">💻</span>
+              <div class="website-name">GitHub</div>
+              <input type="text" class="url-input" value="https://github.com" placeholder="左侧网址" data-side="left" readonly>
+            </div>
+            <div class="divider">
+              <span class="divider-icon">+</span>
+            </div>
+            <div class="website-right">
+              <span class="site-icon">💬</span>
+              <div class="website-name">ChatGPT</div>
+              <input type="text" class="url-input" value="https://chat.openai.com" placeholder="右侧网址" data-side="right" readonly>
+            </div>
+          </div>
+          <button class="split-btn" data-left="https://github.com" data-right="https://chat.openai.com">
+            <span class="btn-icon">🚀</span>
+            分屏
+          </button>
+          <button class="delete-preset-btn" data-preset-id="3" title="删除此预设">
+            <span class="delete-icon">✕</span>
+          </button>
+        </div>
+
+        <!-- 预设选项4 -->
+        <div class="preset-item" data-preset-id="4">
+          <div class="preset-controls">
+            <button class="edit-btn" data-preset-id="4">
+              <span class="edit-icon">✏️</span>
+            </button>
+          </div>
+          <div class="preset-info">
+            <div class="website-left">
+              <span class="site-icon">🔍</span>
+              <div class="website-name">Google</div>
+              <input type="text" class="url-input" value="https://www.google.com" placeholder="左侧网址" data-side="left" readonly>
+            </div>
+            <div class="divider">
+              <span class="divider-icon">+</span>
+            </div>
+            <div class="website-right">
+              <span class="site-icon">🌍</span>
+              <div class="website-name">Wikipedia</div>
+              <input type="text" class="url-input" value="https://www.wikipedia.org" placeholder="右侧网址" data-side="right" readonly>
+            </div>
+          </div>
+          <button class="split-btn" data-left="https://www.google.com" data-right="https://www.wikipedia.org">
+            <span class="btn-icon">🚀</span>
+            分屏
+          </button>
+          <button class="delete-preset-btn" data-preset-id="4" title="删除此预设">
+            <span class="delete-icon">✕</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 添加自定义选项按钮 -->
+      <div class="add-preset-container">
+        <button class="add-preset-btn" id="addPresetBtn">
+          <span class="add-icon">+</span>
+          <span class="add-text">添加自定义组合</span>
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <!-- 重置确认对话框 -->
+  <div class="confirm-dialog" id="resetConfirmDialog">
+    <div class="confirm-dialog-content">
+      <div class="confirm-dialog-header">
+        <h3 class="confirm-title">⚠️ 重置确认</h3>
+      </div>
+      <div class="confirm-dialog-body">
+        <p class="confirm-message">确定要重置所有设置吗？这将：</p>
+        <ul class="confirm-details">
+          <li>删除所有自定义预设组合</li>
+          <li>恢复默认设置</li>
+          <li>清除所有保存的配置</li>
+        </ul>
+        <p class="confirm-warning">此操作不可恢复！</p>
+      </div>
+      <div class="confirm-dialog-actions">
+        <button class="confirm-btn confirm-btn-cancel" id="cancelReset">取消</button>
+        <button class="confirm-btn confirm-btn-ok" id="confirmReset">确认重置</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

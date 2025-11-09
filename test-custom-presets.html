@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义预设功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .info {
+            color: #0066cc;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        #testResults {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>自定义预设功能测试</h1>
+
+    <div class="test-section">
+        <h2>测试说明</h2>
+        <p>这个测试页面用于验证Chrome扩展的自定义预设功能。请按照以下步骤进行测试：</p>
+        <ol>
+            <li>确保Chrome扩展已加载并启用</li>
+            <li>打开扩展的popup界面</li>
+            <li>按照下面的测试用例进行测试</li>
+            <li>观察控制台输出和扩展行为</li>
+        </ol>
+    </div>
+
+    <div class="test-section">
+        <h2>测试用例</h2>
+
+        <div class="test-item">
+            <h3>1. Enter键添加预设测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>点击"添加自定义组合"按钮</li>
+                <li>在左侧输入框中输入有效URL（如：google.com）</li>
+                <li>按Enter键，应该跳转到右侧输入框</li>
+                <li>在右侧输入框中输入有效URL（如：github.com）</li>
+                <li>按Enter键，应该保存并退出编辑模式</li>
+            </ul>
+            <p><strong>预期结果：</strong>预设被成功保存，显示成功提示</p>
+        </div>
+
+        <div class="test-item">
+            <h3>2. 点击确认按钮添加预设测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>点击"添加自定义组合"按钮</li>
+                <li>在两个输入框中输入有效URL</li>
+                <li>点击编辑按钮（变成✓）</li>
+            </ul>
+            <p><strong>预期结果：</strong>预设被成功保存</p>
+        </div>
+
+        <div class="test-item">
+            <h3>3. 无效URL验证测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>添加自定义组合</li>
+                <li>输入无效URL（如：invalid-url）</li>
+                <li>按Enter键或点击确认按钮</li>
+            </ul>
+            <p><strong>预期结果：</strong>显示错误提示，不保存预设</p>
+        </div>
+
+        <div class="test-item">
+            <h3>4. 空URL验证测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>添加自定义组合</li>
+                <li>只填写一个URL，另一个留空</li>
+                <li>按Enter键或点击确认按钮</li>
+            </ul>
+            <p><strong>预期结果：</strong>显示错误提示，不保存预设</p>
+        </div>
+
+        <div class="test-item">
+            <h3>5. 扩展重载后数据持久化测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>添加一个有效的自定义组合</li>
+                <li>在Chrome扩展管理页面重新加载扩展</li>
+                <li>重新打开扩展popup</li>
+            </ul>
+            <p><strong>预期结果：</strong>之前添加的自定义组合应该仍然存在</p>
+        </div>
+
+        <div class="test-item">
+            <h3>6. Esc键取消编辑测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>添加自定义组合或编辑现有预设</li>
+                <li>输入部分内容</li>
+                <li>按Esc键</li>
+            </ul>
+            <p><strong>预期结果：</strong>退出编辑模式，不保存更改</p>
+        </div>
+
+        <div class="test-item">
+            <h3>7. 删除预设测试</h3>
+            <p><strong>测试步骤：</strong></p>
+            <ul>
+                <li>添加一个有效的自定义组合</li>
+                <li>点击删除按钮（×）</li>
+            </ul>
+            <p><strong>预期结果：</strong>预设被删除，更新存储</p>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>调试工具</h2>
+        <button class="btn-primary" onclick="checkChromeStorage()">检查Chrome存储</button>
+        <button class="btn-danger" onclick="clearChromeStorage()">清除Chrome存储</button>
+        <button class="btn-success" onclick="reloadExtension()">重新加载扩展</button>
+
+        <div id="testResults"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>控制台日志</h2>
+        <p>请打开浏览器开发者工具的Console面板查看详细的日志输出。关键日志包括：</p>
+        <ul>
+            <li><span class="info">"Added custom preset: custom-*"</span> - 添加预设成功</li>
+            <li><span class="info">"已保存自定义组合: [...]"</span> - 保存成功</li>
+            <li><span class="info">"从存储加载的自定义组合: [...]"</span> - 加载数据</li>
+            <li><span class="info">"验证后的有效自定义组合: [...]"</span> - 数据验证</li>
+            <li><span class="error">"请填写完整的网址"</span> - 空URL错误</li>
+            <li><span class="error">"请输入有效的网址"</span> - 无效URL错误</li>
+        </ul>
+    </div>
+
+    <script>
+        async function checkChromeStorage() {
+            const results = document.getElementById('testResults');
+            try {
+                const result = await chrome.storage.local.get(['customPresets', 'lastSaved']);
+                const customPresets = result.customPresets || [];
+                const lastSaved = result.lastSaved ? new Date(result.lastSaved).toLocaleString() : '从未保存';
+
+                results.textContent = `Chrome存储状态：
+自定义预设数量：${customPresets.length}
+最后保存时间：${lastSaved}
+预设详情：
+${JSON.stringify(customPresets, null, 2)}`;
+            } catch (error) {
+                results.textContent = `错误：${error.message}`;
+            }
+        }
+
+        async function clearChromeStorage() {
+            const results = document.getElementById('testResults');
+            try {
+                await chrome.storage.local.remove(['customPresets', 'lastSaved']);
+                results.textContent = 'Chrome存储已清除';
+            } catch (error) {
+                results.textContent = `清除失败：${error.message}`;
+            }
+        }
+
+        function reloadExtension() {
+            const results = document.getElementById('testResults');
+            results.textContent = '请手动在Chrome扩展管理页面重新加载扩展\n(chrome://extensions/)';
+            window.open('chrome://extensions/', '_blank');
+        }
+
+        // 页面加载时检查存储状态
+        document.addEventListener('DOMContentLoaded', checkChromeStorage);
+    </script>
+</body>
+</html>
